@@ -21,3 +21,24 @@ html, body {
     border-top: 0; }
   .ttt-board tr:last-child td {
     border-bottom: 0; }
+
+.piece {
+  position: relative;
+  width: 199px;
+  height: 199px;
+  font-size: 270px; }
+  .piece:after {
+    position: absolute;
+    top: -60px;
+    left: 0; }
+
+.x-piece {
+  color: red; }
+  .x-piece:after {
+    content: "X"; }
+
+.o-piece {
+  color: #0069bb;
+  font-size: 270px; }
+  .o-piece:after {
+    content: "O"; }
