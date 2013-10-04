@@ -1,17 +1,33 @@
 <html>
 <head>
-    
+    <link rel="stylesheet" href="styles/style.css" />
 </head>
 <body>
 
+    <div class="page">
+
+    </div>
+
+<script type="text/template" id="ttt-board-template">
+
+<table class="ttt-board">
+    <tr><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td></tr>
+</table>
+
+</script>
 
 <script src="scripts/jquery.min.js"></script>
 <script src="scripts/underscore-min.js"></script>
 <script src="scripts/backbone.js"></script>
 <script>
     var tttBoard = Backbone.View.extend({
+        el: ".page",
         render: function() {
             //render board
+            var boardTemplate = _.template($('#ttt-board-template').html(), {});
+            this.$el.html(boardTemplate);
         }
     });
 
@@ -20,6 +36,7 @@
             turn: "X"
         },
         nextTurn: function(){
+            //switch to opposite state on call
             if (this.turn == "X")
                 this.turn = "O";
             else
@@ -30,14 +47,21 @@
 
     var Router = Backbone.Router.extend({
         routes: {
-            "": "home"
+            ""      : "home",
+            "start" : "newGame"
         }
     });
 
     var newState = new tttState();
     var router = new Router();
+    var board = new tttBoard();
+
     router.on('route:home', function(){
-        //render board
+        //render board - reset timer to 0
+        board.render();
+    });
+    router.on('route:newGame', function(){
+        //start timer
     });
 
     Backbone.history.start();
