@@ -1,0 +1,46 @@
+<html>
+<head>
+    
+</head>
+<body>
+
+
+<script src="scripts/jquery.min.js"></script>
+<script src="scripts/underscore-min.js"></script>
+<script src="scripts/backbone.js"></script>
+<script>
+    var tttBoard = Backbone.View.extend({
+        render: function() {
+            //render board
+        }
+    });
+
+    var tttState = Backbone.Model.extend({
+        defaults: {
+            turn: "X"
+        },
+        nextTurn: function(){
+            if (this.turn == "X")
+                this.turn = "O";
+            else
+                this.turn = "X";
+        }
+
+    });
+
+    var Router = Backbone.Router.extend({
+        routes: {
+            "": "home"
+        }
+    });
+
+    var newState = new tttState();
+    var router = new Router();
+    router.on('route:home', function(){
+        //render board
+    });
+
+    Backbone.history.start();
+</script>
+</body>
+</html>
