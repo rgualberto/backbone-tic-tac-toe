@@ -28,8 +28,8 @@ html, body {
 
 .piece {
   position: relative;
-  width: 199px;
-  height: 199px;
+  width: 100%;
+  height: 100%;
   font-size: 270px; }
   .piece:after {
     position: absolute;
