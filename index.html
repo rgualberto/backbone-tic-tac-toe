@@ -10,7 +10,7 @@
 
 <script type="text/template" id="ttt-board-template">
 
-<table class="ttt-board">
+<table id="play-table" class="ttt-board <%= done %>">
     <tr>
         <% var j = 0; %>
         <% _.each(pieces, function(piece){ %>
@@ -33,7 +33,10 @@
         el: ".page",
         render: function(pieces) {
             //render board
-            var boardTemplate = _.template($('#ttt-board-template').html(), {"pieces": pieces});
+            var done = (pieces["complete"] != undefined && pieces["complete"] == true)?"complete":"";
+            if(done)
+                delete pieces["complete"];
+            var boardTemplate = _.template($('#ttt-board-template').html(), {"pieces": pieces, "done": done});
             this.$el.html(boardTemplate);
         }
     });
@@ -136,6 +139,28 @@
             this.set("positions", oldPositions);
 
             return this.get("inPlay");
+        },
+        renderFinished: function(location){
+            var positionList = this.get("positions"),
+                xList = positionList.X,
+                oList = positionList.O,
+                filledSpaces = xList.concat(oList).map(function(x){ return parseInt(x);}),
+                emptySpaces = _.difference([1,2,3,4,5,6,7,8,9], filledSpaces),
+                oldInPlay = this.get("inPlay");
+
+                for(var i = 0; i < emptySpaces.length; i++){
+                    oldInPlay["piece" + emptySpaces[i].toString()] = '<div class="piece"></div>';
+                }
+
+                var winners = location.split('-');
+                for(var i = 0; i < winners.length; i++){
+                    oldInPlay["piece" + winners[i]] = oldInPlay["piece" + winners[i]].replace('class="', 'class="active ');
+                }
+
+                oldInPlay["complete"] = true;
+                
+                this.set("inPlay", oldInPlay);
+                return this.get("inPlay");
         }
 
     });
@@ -155,8 +180,12 @@
 
     router.on('route:endGame', function(player, location){
         //modify styles to lower opacity on everything but winning move
-        console.log('winner: ' + player);
-        console.log('move: ' + location);
+        board.render(newPiece.renderFinished(location));
+    });
+
+    router.on('route:home', function(){
+        //render board - reset timer to 0
+        board.render(newPiece.get("inPlay"));
     });
 
     router.on('route:nextPlay', function(tile){
@@ -167,11 +196,6 @@
             router.navigate("winner/" + gameResult.winner + "/" + gameResult.sequence, {trigger: true});
         else
             newState.nextTurn();
-    });
-
-    router.on('route:home', function(){
-        //render board - reset timer to 0
-        board.render(newPiece.get("inPlay"));
     });
 
     Backbone.history.start();

@@ -25,6 +25,10 @@ html, body {
     border-top: 0; }
   .ttt-board tr:last-child td {
     border-bottom: 0; }
+  .ttt-board.complete td div {
+    opacity: 0.1; }
+    .ttt-board.complete td div.active {
+      opacity: 1; }
 
 .piece {
   position: relative;
