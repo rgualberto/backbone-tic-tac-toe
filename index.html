@@ -50,6 +50,35 @@
                 this.set("turn", "O");
             else
                 this.set("turn", "X");
+        },
+        evalGame: function(positions, winningCombos){
+            //return boolean false if not over, else return winner character (eg. "X");
+            var inProgress = true;
+
+            var turns = ["X", "O"];
+            for(var i = 0; i < 2; i++){
+                //don't run if min moves to win hasn't been reached
+                if(positions[turns[i]].length < 3) continue;
+                var l1 = winningCombos[positions[turns[i]][0]];
+                if(l1 != undefined && l1.length != 0){ //Check
+                    for(var j = 0;j < l1.length; j++){
+                        l2 = l1[j];
+                        if(l2 != undefined && l2.length != 0){ //Check
+                            for(var k = 0;k < l2.length; k++){
+                                if(positions[turns[i]].indexOf(l2[k].toString()) == -1){
+                                    inProgress = false;
+                                    break;
+                                }
+                            }
+                            if(inProgress)
+                                return turns[i];
+                            else
+                                inProgress = true;
+                        }
+                    }
+                }
+            }
+            return false;
         }
 
     });
@@ -57,7 +86,30 @@
     var tttPiece = Backbone.Model.extend({
         defaults: function(){
             return {
-                inPlay: {}
+                inPlay: {},
+                positions: {"X": [], "O": []},
+                winningCombos: [
+                        [],
+                        [
+                            [1,2,3],
+                            [1,5,9],
+                            [1,4,7]
+                        ],
+                        [
+                            [2,5,8],
+                        ],
+                        [
+                            [3,6,9],
+                            [3,5,7],
+                        ],
+                        [
+                            [4,5,6]
+                        ],
+                        [],[],
+                        [
+                            [7,8,9]
+                        ]
+                    ]
             };
         },
         initialize: function(){
@@ -70,10 +122,19 @@
         },
         place: function(turn, tile){            
             //set this tile to piece
-            var oldInPlay = this.get("inPlay");
+            var oldInPlay = this.get("inPlay");            
             oldInPlay["piece" + tile.toString()] = '<div class="' + turn.toLowerCase() + '-piece piece"></div>';
             //return complete inPlay object
             this.set("inPlay", oldInPlay);
+
+            //update positions for evaluation
+            var oldPositions = this.get("positions");
+            var currentTurn = oldPositions[turn];
+            currentTurn.push(tile);
+            currentTurn.sort();
+            oldPositions[turn] = currentTurn;
+            this.set("positions", oldPositions);
+
             return this.get("inPlay");
         }
 
@@ -94,6 +155,7 @@
     router.on('route:nextPlay', function(tile){
         //place piece then revert to next turn
         board.render(newPiece.place(newState.get("turn"), tile));
+        newState.evalGame(newPiece.get("positions"), newPiece.get("winningCombos"));
         newState.nextTurn();
     });
 
