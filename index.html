@@ -11,9 +11,16 @@
 <script type="text/template" id="ttt-board-template">
 
 <table class="ttt-board">
-    <tr><td></td><td></td><td></td></tr>
-    <tr><td></td><td></td><td></td></tr>
-    <tr><td></td><td></td><td></td></tr>
+    <tr>
+        <% var j = 0; %>
+        <% _.each(pieces, function(piece){ %>
+            <% if(j == 3 || j == 6){ %>
+                </tr><tr>
+            <% } %>
+            <% j++ %>
+            <td><%= piece %></td>
+        <% }); %>
+    </tr>
 </table>
 
 </script>
@@ -24,23 +31,50 @@
 <script>
     var tttBoard = Backbone.View.extend({
         el: ".page",
-        render: function() {
+        render: function(pieces) {
             //render board
-            var boardTemplate = _.template($('#ttt-board-template').html(), {});
+            var boardTemplate = _.template($('#ttt-board-template').html(), {"pieces": pieces});
             this.$el.html(boardTemplate);
         }
     });
 
     var tttState = Backbone.Model.extend({
-        defaults: {
-            turn: "X"
+        defaults: function(){
+            return {
+                turn: "X"
+            };
         },
         nextTurn: function(){
             //switch to opposite state on call
-            if (this.turn == "X")
-                this.turn = "O";
+            if (this.get('turn') == "X")
+                this.set("turn", "O");
             else
-                this.turn = "X";
+                this.set("turn", "X");
+        }
+
+    });
+
+    var tttPiece = Backbone.Model.extend({
+        defaults: function(){
+            return {
+                inPlay: {}
+            };
+        },
+        initialize: function(){
+            //assign inPlay to empty board (give all 9 positions value of empty)
+            var temp = {};
+            for(var i=1; i <= 9; i++){
+                temp["piece" + i.toString()] = '<a href="#/placePiece/' + i.toString() + '" /></a>';
+            }
+            this.set("inPlay", temp);
+        },
+        place: function(turn, tile){            
+            //set this tile to piece
+            var oldInPlay = this.get("inPlay");
+            oldInPlay["piece" + tile.toString()] = '<div class="' + turn.toLowerCase() + '-piece piece"></div>';
+            //return complete inPlay object
+            this.set("inPlay", oldInPlay);
+            return this.get("inPlay");
         }
 
     });
@@ -48,20 +82,24 @@
     var Router = Backbone.Router.extend({
         routes: {
             ""      : "home",
-            "start" : "newGame"
+            "placePiece/:tile" : "nextPlay"
         }
     });
 
     var newState = new tttState();
     var router = new Router();
     var board = new tttBoard();
+    var newPiece = new tttPiece();
+
+    router.on('route:nextPlay', function(tile){
+        //place piece then revert to next turn
+        board.render(newPiece.place(newState.get("turn"), tile));
+        newState.nextTurn();
+    });
 
     router.on('route:home', function(){
         //render board - reset timer to 0
-        board.render();
-    });
-    router.on('route:newGame', function(){
-        //start timer
+        board.render(newPiece.get("inPlay"));
     });
 
     Backbone.history.start();
