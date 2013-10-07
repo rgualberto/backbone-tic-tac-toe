@@ -71,7 +71,7 @@
                                 }
                             }
                             if(inProgress)
-                                return turns[i];
+                                return {"winner": turns[i], "sequence": l2.join('-')};
                             else
                                 inProgress = true;
                         }
@@ -143,7 +143,8 @@
     var Router = Backbone.Router.extend({
         routes: {
             ""      : "home",
-            "placePiece/:tile" : "nextPlay"
+            "placePiece/:tile" : "nextPlay",
+            "winner/:player/:location" : "endGame"
         }
     });
 
@@ -152,11 +153,20 @@
     var board = new tttBoard();
     var newPiece = new tttPiece();
 
+    router.on('route:endGame', function(player, location){
+        //modify styles to lower opacity on everything but winning move
+        console.log('winner: ' + player);
+        console.log('move: ' + location);
+    });
+
     router.on('route:nextPlay', function(tile){
         //place piece then revert to next turn
         board.render(newPiece.place(newState.get("turn"), tile));
-        newState.evalGame(newPiece.get("positions"), newPiece.get("winningCombos"));
-        newState.nextTurn();
+        var gameResult = newState.evalGame(newPiece.get("positions"), newPiece.get("winningCombos"));
+        if(gameResult !== false)
+            router.navigate("winner/" + gameResult.winner + "/" + gameResult.sequence, {trigger: true});
+        else
+            newState.nextTurn();
     });
 
     router.on('route:home', function(){
