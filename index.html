@@ -7,6 +7,7 @@
     <div class="page">
         <div class="directory">
             <div class="logo"><img src="images/tictactoe.png" /></div>
+            <div class="score"></div>
         </div>
         <div class="main"><a class="newGame" href="#/new">New Game</a></div>
     </div>
@@ -28,7 +29,18 @@
 
 </script>
 
+<script type="text/template" id="ttt-score-table">
 
+<table id="score-table" class="ttt-score-board">
+    <thead>
+        <th class="x-piece"></th><th class="o-piece"></th><th>Tie</th>
+    </thead>
+    <tbody>
+        <tr><td>0</td><td>0</td><td>0</td></tr>
+    </tbody>
+</table>
+
+</script>
 
 <script src="scripts/jquery.min.js"></script>
 <script src="scripts/underscore-min.js"></script>
@@ -37,7 +49,7 @@
     var tttGameBoard = Backbone.View.extend({
         el: ".main",
         render: function(pieces) {
-            //render board
+            //render game board
             var done = (pieces["complete"] != undefined && pieces["complete"] == true)?"complete":"";
             if(done)
                 delete pieces["complete"];
@@ -171,6 +183,15 @@
 
     });
 
+    var tttScoreBoard = Backbone.View.extend({
+        el: ".score",
+        render: function() {
+            //render score board
+            var boardTemplate = _.template($('#ttt-score-table').html(), {});
+            this.$el.html(boardTemplate);
+        }
+    });
+
     var Router = Backbone.Router.extend({
         routes: {
             ""      : "home",
@@ -183,7 +204,8 @@
     var router = new Router(),
         board,
         newState,
-        newPiece;
+        newPiece,
+        score;
 
     router.on('route:nextPlay', function(tile){
         //place piece then revert to next turn
@@ -205,8 +227,10 @@
         board = new tttGameBoard();
         newState = new tttGameState();
         newPiece = new tttGamePiece();
+        score = new tttScoreBoard();
 
         board.render(newPiece.get("inPlay"));
+        score.render();
     })
 
     Backbone.history.start();

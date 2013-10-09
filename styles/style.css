@@ -34,6 +34,17 @@ html, body {
     width: 238px;
     border-bottom: 3px dashed white; }
 
+.ttt-score-board {
+  margin: 20px auto 0;
+  font-size: 64px;
+  font-family: "Averia Gruesa Libre";
+  text-align: center; }
+  .ttt-score-board thead {
+    color: #ecf1d4; }
+  .ttt-score-board tr td {
+    padding: 20px;
+    color: white; }
+
 .ttt-board {
   margin: 50px auto 0;
   width: 600px;
@@ -77,7 +88,6 @@ html, body {
     content: "X"; }
 
 .o-piece {
-  color: #0069bb;
-  font-size: 270px; }
+  color: #0069bb; }
   .o-piece:after {
     content: "O"; }
