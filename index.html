@@ -36,7 +36,7 @@
         <th class="x-piece"></th><th class="o-piece"></th><th>Tie</th>
     </thead>
     <tbody>
-        <tr><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td><%= xScore %></td><td><%= oScore %></td><td><%= tieScore %></td></tr>
     </tbody>
 </table>
 
@@ -185,10 +185,43 @@
 
     var tttScoreBoard = Backbone.View.extend({
         el: ".score",
-        render: function() {
+        render: function(score) {
             //render score board
-            var boardTemplate = _.template($('#ttt-score-table').html(), {});
+            var boardTemplate = _.template($('#ttt-score-table').html(), score);
             this.$el.html(boardTemplate);
+        }
+    });
+
+    var tttScoreState = Backbone.Model.extend({
+        defaults: function(){
+            return {
+                xScore: 0,
+                oScore: 0,
+                tieScore: 0
+            };
+        },
+        updateScore: function(result){
+            var newVal;
+            switch(result){
+                case "X":
+                    newVal = this.get("xScore");
+                    newVal++;
+                    this.set("xScore", newVal);
+                    break;
+                
+                case "O":
+                    newVal = this.get("oScore");
+                    newVal++;
+                    this.set("oScore", newVal);
+                    break;
+
+                case "tie":
+                default:
+                    newVal = this.get("tieScore");
+                    newVal++;
+                    this.set("tieScore", newVal);
+                    break;
+            }
         }
     });
 
@@ -202,38 +235,47 @@
     });
 
     var router = new Router(),
+        score = new tttScoreBoard(),
+        scoreState = new tttScoreState(),
         board,
-        newState,
-        newPiece,
-        score;
+        boardState,
+        boardPiece;
 
-    router.on('route:nextPlay', function(tile){
-        //place piece then revert to next turn
-        board.render(newPiece.place(newState.get("turn"), tile));
-        var gameResult = newState.evalGame(newPiece.get("positions"), newPiece.get("winningCombos"), newPiece.get("lastPlay"));
-        if(gameResult !== false)
-            router.navigate("winner/" + gameResult.winner + "/" + gameResult.sequence, {trigger: true});
-        else
-            newState.nextTurn();
-    });
-
-    router.on('route:endGame', function(player, location){
-        //modify styles to lower opacity on everything but winning move
-        board.render(newPiece.renderFinished(location));
-    });
 
     router.on('route:newGame', function(){
         //reset GameBoard but keep score
         board = new tttGameBoard();
-        newState = new tttGameState();
-        newPiece = new tttGamePiece();
-        score = new tttScoreBoard();
+        boardState = new tttGameState();
+        boardPiece = new tttGamePiece();
 
-        board.render(newPiece.get("inPlay"));
-        score.render();
-    })
+        board.render(boardPiece.get("inPlay"));
+        score.render(scoreState.attributes);
+    });
+
+    router.on('route:nextPlay', function(tile){
+        //place piece then revert to next turn
+        board.render(boardPiece.place(boardState.get("turn"), tile));
+        var gameResult = boardState.evalGame(boardPiece.get("positions"), boardPiece.get("winningCombos"), boardPiece.get("lastPlay"));
+        if(gameResult !== false)
+            router.navigate("winner/" + gameResult.winner + "/" + gameResult.sequence, {trigger: true});
+        else
+            boardState.nextTurn();
+    });
+
+    router.on('route:endGame', function(player, location){
+        //modify styles to lower opacity on everything but winning move
+        board.render(boardPiece.renderFinished(location));
+        scoreState.updateScore(player);
+        score.render(scoreState.attributes);
+
+    });
 
     Backbone.history.start();
+
+    //TODO:
+    //render new game button on endGame- route to new
+    //make it recognize tie game
+    //add timer (new model) to game and log it in score state
 </script>
 </body>
 </html>
