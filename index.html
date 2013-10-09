@@ -110,6 +110,10 @@
             if(winningValues.length !== 0)
                 return {"winner": currentPlayer, "sequence": winningValues.join('-')};
 
+            
+            if(positions["X"].length + positions["O"].length === 9)
+                return {"winner": "tie", "sequence": "0-0-0"};
+
             return false;
         }
 
@@ -175,9 +179,12 @@
                     oldInPlay["piece" + emptySpaces[i].toString()] = '<div class="piece"></div>';
                 }
 
-                var winners = location.split('-');
-                for(var i = 0; i < winners.length; i++){
-                    oldInPlay["piece" + winners[i]] = oldInPlay["piece" + winners[i]].replace('class="', 'class="active ');
+                if(location != "0-0-0"){
+                    var winners = location.split('-');
+                    
+                    for(var i = 0; i < winners.length; i++){
+                        oldInPlay["piece" + winners[i]] = oldInPlay["piece" + winners[i]].replace('class="', 'class="active ');
+                    }
                 }
 
                 oldInPlay["complete"] = true;
@@ -196,7 +203,6 @@
             this.$el.html(scoreBoardTemplate);
         },
         newGameButton: function(show){
-            console.log(show);
             var inactive = (!show)?{"hide":"inactive"}:{"hide":""};
             var newGameButton = _.template($('#ttt-new-game-btn').html(), inactive);
             $('.button-callout').html(newGameButton);
@@ -287,7 +293,6 @@
     Backbone.history.start();
 
     //TODO:
-    //make it recognize tie game
     //add timer (new model) to game and log it in score state
 </script>
 </body>
