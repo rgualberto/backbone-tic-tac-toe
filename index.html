@@ -54,33 +54,41 @@
             else
                 this.set("turn", "X");
         },
-        evalGame: function(positions, winningCombos){
+        evalGame: function(positions, winningCombos, lastPlay){
             //return boolean false if not over, else return winner character (eg. "X");
-            var inProgress = true;
+            
+            var currentPlayer = lastPlay.player;
 
-            var turns = ["X", "O"];
-            for(var i = 0; i < 2; i++){
-                //don't run if min moves to win hasn't been reached
-                if(positions[turns[i]].length < 3) continue;
-                var l1 = winningCombos[positions[turns[i]][0]];
-                if(l1 != undefined && l1.length != 0){ //Check
-                    for(var j = 0;j < l1.length; j++){
-                        l2 = l1[j];
-                        if(l2 != undefined && l2.length != 0){ //Check
-                            for(var k = 0;k < l2.length; k++){
-                                if(positions[turns[i]].indexOf(l2[k].toString()) == -1){
-                                    inProgress = false;
-                                    break;
-                                }
-                            }
-                            if(inProgress)
-                                return {"winner": turns[i], "sequence": l2.join('-')};
-                            else
-                                inProgress = true;
-                        }
-                    }
+            //don't run if min moves to win hasn't been reached
+            if(positions[currentPlayer].length < 3) return false;
+
+            var possibleValues = [],
+                win = false,
+                inc = 0,
+                winningValues = [];
+
+            _.each(winningCombos, function(combo){
+                if(combo.indexOf(parseInt(lastPlay.tile)) != -1){
+                    possibleValues.push(combo);
                 }
-            }
+            });
+            
+
+            _.each(possibleValues, function(combo){
+                _.each(combo, function(num){
+                    if(positions[currentPlayer].indexOf(num.toString()) != -1)
+                        inc++;
+                });
+
+                if(inc === 3) //winner - add to winning list
+                    winningValues = winningValues.concat(_.difference(combo, winningValues));
+
+                inc = 0;
+            });
+
+            if(winningValues.length !== 0)
+                return {"winner": currentPlayer, "sequence": winningValues.join('-')};
+
             return false;
         }
 
@@ -91,27 +99,16 @@
             return {
                 inPlay: {},
                 positions: {"X": [], "O": []},
+                lastPlay: {player: "X", tile: 0},
                 winningCombos: [
-                        [],
-                        [
                             [1,2,3],
                             [1,5,9],
-                            [1,4,7]
-                        ],
-                        [
+                            [1,4,7],
                             [2,5,8],
-                        ],
-                        [
                             [3,6,9],
                             [3,5,7],
-                        ],
-                        [
-                            [4,5,6]
-                        ],
-                        [],[],
-                        [
+                            [4,5,6],
                             [7,8,9]
-                        ]
                     ]
             };
         },
@@ -137,6 +134,11 @@
             currentTurn.sort();
             oldPositions[turn] = currentTurn;
             this.set("positions", oldPositions);
+
+            var lastPlay = this.get("lastPlay");
+            lastPlay["player"] = turn;
+            lastPlay["tile"] = tile;
+            this.set("lastPlay", lastPlay);
 
             return this.get("inPlay");
         },
@@ -191,7 +193,7 @@
     router.on('route:nextPlay', function(tile){
         //place piece then revert to next turn
         board.render(newPiece.place(newState.get("turn"), tile));
-        var gameResult = newState.evalGame(newPiece.get("positions"), newPiece.get("winningCombos"));
+        var gameResult = newState.evalGame(newPiece.get("positions"), newPiece.get("winningCombos"), newPiece.get("lastPlay"));
         if(gameResult !== false)
             router.navigate("winner/" + gameResult.winner + "/" + gameResult.sequence, {trigger: true});
         else
