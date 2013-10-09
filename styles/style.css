@@ -33,6 +33,19 @@ html, body {
     padding-bottom: 10px;
     width: 238px;
     border-bottom: 3px dashed white; }
+  .directory .new-game-btn {
+    display: block;
+    margin: 50px auto 0;
+    width: 200px;
+    background: #0069bb;
+    border-radius: 4px;
+    font-family: "Averia Gruesa Libre";
+    font-size: 32px;
+    color: white;
+    text-decoration: none;
+    text-align: center; }
+    .directory .new-game-btn.inactive {
+      display: none; }
 
 .ttt-score-board {
   margin: 20px auto 0;

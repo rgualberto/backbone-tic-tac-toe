@@ -8,6 +8,7 @@
         <div class="directory">
             <div class="logo"><img src="images/tictactoe.png" /></div>
             <div class="score"></div>
+            <div class="button-callout"></div>
         </div>
         <div class="main"><a class="newGame" href="#/new">New Game</a></div>
     </div>
@@ -40,6 +41,10 @@
     </tbody>
 </table>
 
+</script>
+
+<script type="text/template" id="ttt-new-game-btn">
+    <a class="new-game-btn <%= hide %>" href="#/new">New Game</a>
 </script>
 
 <script src="scripts/jquery.min.js"></script>
@@ -187,8 +192,14 @@
         el: ".score",
         render: function(score) {
             //render score board
-            var boardTemplate = _.template($('#ttt-score-table').html(), score);
-            this.$el.html(boardTemplate);
+            var scoreBoardTemplate = _.template($('#ttt-score-table').html(), score);
+            this.$el.html(scoreBoardTemplate);
+        },
+        newGameButton: function(show){
+            console.log(show);
+            var inactive = (!show)?{"hide":"inactive"}:{"hide":""};
+            var newGameButton = _.template($('#ttt-new-game-btn').html(), inactive);
+            $('.button-callout').html(newGameButton);
         }
     });
 
@@ -250,6 +261,7 @@
 
         board.render(boardPiece.get("inPlay"));
         score.render(scoreState.attributes);
+        score.newGameButton(false);
     });
 
     router.on('route:nextPlay', function(tile){
@@ -267,13 +279,14 @@
         board.render(boardPiece.renderFinished(location));
         scoreState.updateScore(player);
         score.render(scoreState.attributes);
+        score.newGameButton(true);
+
 
     });
 
     Backbone.history.start();
 
     //TODO:
-    //render new game button on endGame- route to new
     //make it recognize tie game
     //add timer (new model) to game and log it in score state
 </script>
