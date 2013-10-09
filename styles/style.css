@@ -8,9 +8,20 @@ html, body {
   margin: 0;
   background: url(../images/bg.jpg); }
 
-.page {
-  margin: auto;
+.main {
+  float: left;
   width: 900px; }
+
+.directory {
+  float: left;
+  width: 300px;
+  height: 100%;
+  background: url(../images/d-bg.jpg); }
+  .directory .logo {
+    margin: 10px auto;
+    padding-bottom: 10px;
+    width: 238px;
+    border-bottom: 3px dashed white; }
 
 .ttt-board {
   margin: 50px auto 0;
@@ -50,7 +61,7 @@ html, body {
     left: 0; }
 
 .x-piece {
-  color: red; }
+  color: #ff4141; }
   .x-piece:after {
     content: "X"; }
 
