@@ -44,8 +44,6 @@ html, body {
     color: white;
     text-decoration: none;
     text-align: center; }
-    .directory .new-game-btn.inactive {
-      display: none; }
 
 .ttt-score-board {
   margin: 20px auto 0;

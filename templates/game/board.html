@@ -1,0 +1,13 @@
+<% var boardClass = done ? 'ttt-board complete' : 'ttt-board'; %>
+<table id="play-table" class="<%= boardClass %>">
+    <tr>
+        <% var j = 0; %>
+        <% _.each(pieces, function(piece){ %>
+            <% if(j == 3 || j == 6){ %>
+                </tr><tr>
+            <% } %>
+            <% j++ %>
+            <td><%= piece %></td>
+        <% }); %>
+    </tr>
+</table>
