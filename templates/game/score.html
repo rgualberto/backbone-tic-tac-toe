@@ -1,8 +1,14 @@
-<table id="score-table" class="ttt-score-board">
-    <thead>
-        <th class="x-piece"></th><th class="o-piece"></th><th>Tie</th>
-    </thead>
-    <tbody>
-        <tr><td><%= xScore %></td><td><%= oScore %></td><td><%= tieScore %></td></tr>
-    </tbody>
-</table>
+<div class="ttt-score-board">
+    <div class="board-column">
+        <span class="board-title x-piece"></span>
+        <span class="board-count"><%= xScore %></span>
+    </div>
+    <div class="board-column">
+        <span class="board-title o-piece"></span>
+        <span class="board-count"><%= oScore %></span>
+    </div>
+    <div class="board-column">
+        <span class="board-title">Tie</span>
+        <span class="board-count"><%= tieScore %></span>
+    </div>
+</div>
