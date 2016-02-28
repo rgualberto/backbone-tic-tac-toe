@@ -5,6 +5,7 @@ require.config({
         jquery: 'libs/jquery/jquery-min',
         underscore: 'libs/underscore/underscore-min',
         backbone: 'libs/backbone/backbone-min',
+        text: 'libs/require/text',
         templates: '../templates'
     },
 
@@ -13,6 +14,6 @@ require.config({
 
 });
 
-require(['app'], function(App){
+require(['app'], function (App) {
     App.initialize();
 });

@@ -1,10 +1,10 @@
 define([
     'backbone',
-    'router',
+    'router'
     ],
 
-    function(Backbone, Router){
-        var initialize = function(){
+    function (Backbone, Router) {
+        var initialize = function () {
             Router.initialize();
         };
 

@@ -7,7 +7,7 @@ define([
     'text!templates/game/new_game_button.html'
     ],
 
-    function($, _, Backbone, ScoreStateModel, scoreTemplate, newGameButtonTemplate){
+    function ($, _, Backbone, ScoreStateModel, scoreTemplate, newGameButtonTemplate) {
 
     var ScoreView = Backbone.View.extend({
         el: $('.score'),

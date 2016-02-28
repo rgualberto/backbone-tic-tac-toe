@@ -1,39 +1,40 @@
 define([
     'jquery',
     'underscore',
-    'backbone',
+    'backbone'
     ],
 
-    function($, _, Backbone){
+    function ($, _, Backbone) {
 
     var ScoreStateModel = Backbone.Model.extend({
-        defaults: function(){
+        defaults: function () {
             return {
                 xScore: 0,
                 oScore: 0,
                 tieScore: 0
             };
         },
-        updateScore: function(result){
+
+        updateScore: function (result) {
             var newVal;
+
             switch(result){
-                case "X":
-                    newVal = this.get("xScore");
+                case 'X':
+                    newVal = this.get('xScore');
                     newVal++;
-                    this.set("xScore", newVal);
+                    this.set('xScore', newVal);
                     break;
                 
-                case "O":
-                    newVal = this.get("oScore");
+                case 'O':
+                    newVal = this.get('oScore');
                     newVal++;
-                    this.set("oScore", newVal);
+                    this.set('oScore', newVal);
                     break;
 
-                case "tie":
                 default:
-                    newVal = this.get("tieScore");
+                    newVal = this.get('tieScore');
                     newVal++;
-                    this.set("tieScore", newVal);
+                    this.set('tieScore', newVal);
                     break;
             }
         }

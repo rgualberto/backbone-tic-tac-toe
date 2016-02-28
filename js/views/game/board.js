@@ -6,12 +6,12 @@ define([
     'text!templates/game/board.html'
     ],
 
-    function($, _, Backbone, PieceModel, boardTemplate){
+    function ($, _, Backbone, PieceModel, boardTemplate) {
 
     var BoardView = Backbone.View.extend({
         el: $('.main'),
 
-        render: function (appState){
+        render: function (appState) {
             var board = _.template(boardTemplate),
                 compiledBoard,
                 boardData,
@@ -24,16 +24,16 @@ define([
             }
 
             pieces = appState.piece.get('inPlay');
-            done = (pieces['complete'] != undefined) && (pieces['complete'] == true);
+            done = !_.isUndefined(pieces.complete) && (pieces.complete === true);
 
             if (done) {
-                delete pieces['complete'];
+                delete pieces.complete;
             }
 
             boardData = {
                 "pieces": pieces,
                 "done": done
-            }
+            };
 
             compiledBoard = board(boardData);
 

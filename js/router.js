@@ -7,7 +7,7 @@ define([
     'views/game/score'
     ],
 
-    function($, _, Backbone, GameStateModel, BoardView, ScoreView) {
+    function ($, _, Backbone, GameStateModel, BoardView, ScoreView) {
 
     var AppRouter = Backbone.Router.extend({
         routes: {
@@ -18,7 +18,7 @@ define([
         }
     });
 
-    var initialize = function() {
+    var initialize = function () {
         var game = new AppRouter(),
             appState = {
                 gameState: null,
